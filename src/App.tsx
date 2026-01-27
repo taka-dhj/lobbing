@@ -10,7 +10,7 @@ function App() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [editingReservation, setEditingReservation] = useState<Reservation | undefined>();
   const [showForm, setShowForm] = useState(false);
-  const [selectedYear, setSelectedYear] = useState<number>(2025);
+  const [selectedYear, setSelectedYear] = useState<number>(2024);
 
   useEffect(() => {
     try {
@@ -147,7 +147,7 @@ function App() {
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-semibold">各月売り上げ予定</h3>
                   <div className="flex gap-2">
-                    {[2025, 2026, 2027].map((year) => (
+                    {[2024, 2025, 2026, 2027].map((year) => (
                       <button
                         key={year}
                         onClick={() => setSelectedYear(year)}
