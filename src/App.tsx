@@ -5,6 +5,7 @@ import { groupReservationsByMonth, getMonthsForYear, getMonthSales, getMonthName
 import { MonthlyView } from './components/MonthlyView';
 import { ReservationForm } from './components/ReservationForm';
 import { dummyReservations } from './data/dummyData';
+import { realReservations } from './data/realData';
 
 function App() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -15,19 +16,19 @@ function App() {
   useEffect(() => {
     try {
       const loaded = loadReservations();
-      // データが空の場合、ダミーデータを読み込む
+      // データが空の場合、実データを読み込む
       if (loaded.length === 0) {
-        console.log('ローカルストレージが空のため、ダミーデータを読み込みます');
-        saveReservations(dummyReservations);
-        setReservations(dummyReservations);
+        console.log('ローカルストレージが空のため、実データを読み込みます');
+        saveReservations(realReservations);
+        setReservations(realReservations);
       } else {
         console.log(`ローカルストレージから ${loaded.length} 件の予約を読み込みました`);
         setReservations(loaded);
       }
     } catch (error) {
-      console.error('データの読み込みに失敗しました。ダミーデータを使用します:', error);
-      // エラーが発生した場合でもダミーデータを表示
-      setReservations(dummyReservations);
+      console.error('データの読み込みに失敗しました。実データを使用します:', error);
+      // エラーが発生した場合でも実データを表示
+      setReservations(realReservations);
     }
   }, []);
 
@@ -86,9 +87,9 @@ function App() {
   };
 
   const handleLoadDummyData = () => {
-    if (confirm('ダミーデータを読み込みますか？既存のデータは上書きされます。')) {
-      saveReservations(dummyReservations);
-      setReservations(dummyReservations);
+    if (confirm('実データを読み込みますか？既存のデータは上書きされます。')) {
+      saveReservations(realReservations);
+      setReservations(realReservations);
     }
   };
 
@@ -103,7 +104,7 @@ function App() {
                 onClick={handleLoadDummyData}
                 className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 font-medium shadow-sm text-sm"
               >
-                ダミーデータ読み込み
+                実データ読み込み
               </button>
               <button
                 onClick={handleNewReservation}
