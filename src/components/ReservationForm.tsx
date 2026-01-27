@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Reservation, CustomerType } from '../types';
+import { useState, useEffect } from 'react';
+import { Reservation, CustomerType, RoomAllocation, RoomType } from '../types';
 import { calculateTotalAmount } from '../utils/calculations';
 import { generateId } from '../utils/dateUtils';
 
@@ -9,21 +9,33 @@ interface ReservationFormProps {
   onCancel: () => void;
 }
 
+const ROOM_TYPES: RoomType[] = [
+  '本館1', '本館2', '本館3', '本館4', '本館5', '本館6', '本館7',
+  '別館',
+  'コテージ1', 'コテージ2', 'コテージ3'
+];
+
 export const ReservationForm = ({ reservation, onSave, onCancel }: ReservationFormProps) => {
   const [formData, setFormData] = useState({
     date: reservation?.date || new Date().toISOString().split('T')[0],
     customerName: reservation?.customerName || '',
     type: (reservation?.type || '一般') as CustomerType,
     unitPrice: reservation?.unitPrice || 0,
-    numberOfPeople: reservation?.numberOfPeople || 0,
     tennisCourt: reservation?.tennisCourt || 0,
     banquetHall: reservation?.banquetHall || 0,
     other: reservation?.other || 0,
   });
 
+  const [rooms, setRooms] = useState<RoomAllocation[]>(
+    reservation?.rooms || []
+  );
+
+  // 合計人数を計算
+  const totalPeople = rooms.reduce((sum, room) => sum + room.guestCount, 0);
+
   const totalAmount = calculateTotalAmount(
     formData.unitPrice,
-    formData.numberOfPeople,
+    totalPeople,
     formData.tennisCourt,
     formData.banquetHall,
     formData.other
@@ -34,7 +46,9 @@ export const ReservationForm = ({ reservation, onSave, onCancel }: ReservationFo
     const reservationData: Reservation = {
       id: reservation?.id || generateId(),
       ...formData,
+      numberOfPeople: totalPeople,
       totalAmount,
+      rooms: rooms.length > 0 ? rooms : undefined,
     };
     onSave(reservationData);
   };
@@ -43,6 +57,26 @@ export const ReservationForm = ({ reservation, onSave, onCancel }: ReservationFo
     setFormData(prev => ({
       ...prev,
       [field]: typeof value === 'string' ? value : Number(value) || 0,
+    }));
+  };
+
+  const handleAddRoom = () => {
+    setRooms(prev => [...prev, { roomType: '本館1', guestCount: 1 }]);
+  };
+
+  const handleRemoveRoom = (index: number) => {
+    setRooms(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRoomChange = (index: number, field: 'roomType' | 'guestCount', value: string | number) => {
+    setRooms(prev => prev.map((room, i) => {
+      if (i === index) {
+        return {
+          ...room,
+          [field]: field === 'guestCount' ? Number(value) || 0 : value
+        };
+      }
+      return room;
     }));
   };
 
@@ -107,21 +141,73 @@ export const ReservationForm = ({ reservation, onSave, onCancel }: ReservationFo
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
+      </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            人数 *
+      {/* 部屋と人数 */}
+      <div className="mt-6">
+        <div className="flex justify-between items-center mb-3">
+          <label className="block text-sm font-medium text-gray-700">
+            部屋と宿泊人数
           </label>
-          <input
-            type="number"
-            value={formData.numberOfPeople}
-            onChange={(e) => handleChange('numberOfPeople', e.target.value)}
-            required
-            min="1"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
+          <button
+            type="button"
+            onClick={handleAddRoom}
+            className="bg-green-600 text-white px-3 py-1 rounded-md hover:bg-green-700 text-sm font-medium"
+          >
+            + 部屋を追加
+          </button>
         </div>
+        
+        {rooms.length === 0 ? (
+          <div className="bg-gray-50 p-4 rounded-md text-center text-gray-500">
+            部屋を追加してください
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {rooms.map((room, index) => (
+              <div key={index} className="flex gap-3 items-center bg-gray-50 p-3 rounded-md">
+                <div className="flex-1">
+                  <select
+                    value={room.roomType}
+                    onChange={(e) => handleRoomChange(index, 'roomType', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    {ROOM_TYPES.map(roomType => (
+                      <option key={roomType} value={roomType}>{roomType}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-32">
+                  <input
+                    type="number"
+                    value={room.guestCount}
+                    onChange={(e) => handleRoomChange(index, 'guestCount', e.target.value)}
+                    min="1"
+                    placeholder="人数"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleRemoveRoom(index)}
+                  className="text-red-600 hover:text-red-800 font-medium px-2"
+                >
+                  削除
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        <div className="mt-3 p-3 bg-blue-50 rounded-md">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium text-gray-700">合計宿泊人数:</span>
+            <span className="text-xl font-bold text-blue-600">{totalPeople}人</span>
+          </div>
+        </div>
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             テニスコート (円)
