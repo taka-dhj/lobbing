@@ -118,80 +118,82 @@ function App() {
             </button>
           </div>
         ) : (
-          <div>
-            {monthlySummaries.map((summary) => (
-              <MonthlyView
-                key={summary.month}
-                summary={summary}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
-        )}
+          <>
+            {/* 全体サマリーを上部に表示 */}
+            <div className="mb-8 bg-white rounded-lg shadow-lg p-6">
+              <h2 className="text-xl font-bold mb-4">全体サマリー</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div className="bg-blue-50 p-4 rounded-md">
+                  <div className="text-sm text-gray-600 mb-1">総売上</div>
+                  <div className="text-2xl font-bold text-blue-600">
+                    ¥{monthlySummaries.reduce((sum, m) => sum + m.totalAmount, 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="bg-blue-50 p-4 rounded-md">
+                  <div className="text-sm text-gray-600 mb-1">一般合計</div>
+                  <div className="text-2xl font-bold text-blue-600">
+                    ¥{monthlySummaries.reduce((sum, m) => sum + m.generalTotal, 0).toLocaleString()}
+                  </div>
+                </div>
+                <div className="bg-green-50 p-4 rounded-md">
+                  <div className="text-sm text-gray-600 mb-1">学生合計</div>
+                  <div className="text-2xl font-bold text-green-600">
+                    ¥{monthlySummaries.reduce((sum, m) => sum + m.studentTotal, 0).toLocaleString()}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold">各月売り上げ予定</h3>
+                  <div className="flex gap-2">
+                    {[2025, 2026, 2027].map((year) => (
+                      <button
+                        key={year}
+                        onClick={() => setSelectedYear(year)}
+                        className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                          selectedYear === year
+                            ? 'bg-indigo-600 text-white'
+                            : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        }`}
+                      >
+                        {year}年
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                  {getMonthsForYear(selectedYear).map((month) => {
+                    const sales = getMonthSales(month, reservations);
+                    return (
+                      <div key={month} className="bg-gradient-to-br from-indigo-50 to-blue-50 p-4 rounded-lg border border-indigo-100 hover:shadow-md transition-shadow">
+                        <div className="text-sm font-medium text-gray-700 mb-2">{getMonthName(month)}</div>
+                        <div className="text-2xl font-bold text-indigo-700">
+                          ¥{sales.totalAmount.toLocaleString()}
+                        </div>
+                        <div className="mt-2 flex gap-3 text-xs">
+                          <span className="text-gray-600">一般: ¥{sales.generalTotal.toLocaleString()}</span>
+                          <span className="text-gray-600">学生: ¥{sales.studentTotal.toLocaleString()}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
 
-        {monthlySummaries.length > 0 && (
-          <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
-            <h2 className="text-xl font-bold mb-4">全体サマリー</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-blue-50 p-4 rounded-md">
-                <div className="text-sm text-gray-600 mb-1">総売上</div>
-                <div className="text-2xl font-bold text-blue-600">
-                  ¥{monthlySummaries.reduce((sum, m) => sum + m.totalAmount, 0).toLocaleString()}
-                </div>
-              </div>
-              <div className="bg-blue-50 p-4 rounded-md">
-                <div className="text-sm text-gray-600 mb-1">一般合計</div>
-                <div className="text-2xl font-bold text-blue-600">
-                  ¥{monthlySummaries.reduce((sum, m) => sum + m.generalTotal, 0).toLocaleString()}
-                </div>
-              </div>
-              <div className="bg-green-50 p-4 rounded-md">
-                <div className="text-sm text-gray-600 mb-1">学生合計</div>
-                <div className="text-2xl font-bold text-green-600">
-                  ¥{monthlySummaries.reduce((sum, m) => sum + m.studentTotal, 0).toLocaleString()}
-                </div>
-              </div>
+            {/* 月次詳細ビュー */}
+            <div>
+              {monthlySummaries.map((summary) => (
+                <MonthlyView
+                  key={summary.month}
+                  summary={summary}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ))}
             </div>
-            
-            <div className="mt-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">各月売り上げ予定</h3>
-                <div className="flex gap-2">
-                  {[2025, 2026, 2027].map((year) => (
-                    <button
-                      key={year}
-                      onClick={() => setSelectedYear(year)}
-                      className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                        selectedYear === year
-                          ? 'bg-indigo-600 text-white'
-                          : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                      }`}
-                    >
-                      {year}年
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {getMonthsForYear(selectedYear).map((month) => {
-                  const sales = getMonthSales(month, reservations);
-                  return (
-                    <div key={month} className="bg-gradient-to-br from-indigo-50 to-blue-50 p-4 rounded-lg border border-indigo-100 hover:shadow-md transition-shadow">
-                      <div className="text-sm font-medium text-gray-700 mb-2">{getMonthName(month)}</div>
-                      <div className="text-2xl font-bold text-indigo-700">
-                        ¥{sales.totalAmount.toLocaleString()}
-                      </div>
-                      <div className="mt-2 flex gap-3 text-xs">
-                        <span className="text-gray-600">一般: ¥{sales.generalTotal.toLocaleString()}</span>
-                        <span className="text-gray-600">学生: ¥{sales.studentTotal.toLocaleString()}</span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+          </>
         )}
       </main>
     </div>
