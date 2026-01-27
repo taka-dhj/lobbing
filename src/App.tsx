@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Reservation } from './types';
 import { loadReservations, saveReservations, updateReservation, deleteReservation } from './utils/storage';
 import { groupReservationsByMonth, getMonthsForYear, getMonthSales, getMonthName } from './utils/calculations';
@@ -32,6 +32,26 @@ function App() {
   }, []);
 
   const monthlySummaries = groupReservationsByMonth(reservations);
+
+  // 選択中の年度の売上を計算
+  const selectedYearSummary = React.useMemo(() => {
+    const yearMonths = getMonthsForYear(selectedYear);
+    const yearReservations = reservations.filter(r => {
+      const reservationMonth = r.date.substring(0, 7); // yyyy-MM形式
+      return yearMonths.includes(reservationMonth);
+    });
+
+    const totalAmount = yearReservations.reduce((sum, r) => sum + r.totalAmount, 0);
+    const generalTotal = yearReservations
+      .filter(r => r.type === '一般')
+      .reduce((sum, r) => sum + r.totalAmount, 0);
+    const studentTotal = yearReservations
+      .filter(r => r.type === '学生')
+      .reduce((sum, r) => sum + r.totalAmount, 0);
+    const reservationCount = yearReservations.length;
+
+    return { totalAmount, generalTotal, studentTotal, reservationCount };
+  }, [reservations, selectedYear]);
 
   const handleSave = (reservation: Reservation) => {
     if (editingReservation) {
@@ -121,24 +141,30 @@ function App() {
           <>
             {/* 全体サマリーを上部に表示 */}
             <div className="mb-8 bg-white rounded-lg shadow-lg p-6">
-              <h2 className="text-xl font-bold mb-4">全体サマリー</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <h2 className="text-xl font-bold mb-4">{selectedYear}年 全体サマリー</h2>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 <div className="bg-blue-50 p-4 rounded-md">
                   <div className="text-sm text-gray-600 mb-1">総売上</div>
                   <div className="text-2xl font-bold text-blue-600">
-                    ¥{monthlySummaries.reduce((sum, m) => sum + m.totalAmount, 0).toLocaleString()}
+                    ¥{selectedYearSummary.totalAmount.toLocaleString()}
                   </div>
                 </div>
                 <div className="bg-blue-50 p-4 rounded-md">
                   <div className="text-sm text-gray-600 mb-1">一般合計</div>
                   <div className="text-2xl font-bold text-blue-600">
-                    ¥{monthlySummaries.reduce((sum, m) => sum + m.generalTotal, 0).toLocaleString()}
+                    ¥{selectedYearSummary.generalTotal.toLocaleString()}
                   </div>
                 </div>
                 <div className="bg-green-50 p-4 rounded-md">
                   <div className="text-sm text-gray-600 mb-1">学生合計</div>
                   <div className="text-2xl font-bold text-green-600">
-                    ¥{monthlySummaries.reduce((sum, m) => sum + m.studentTotal, 0).toLocaleString()}
+                    ¥{selectedYearSummary.studentTotal.toLocaleString()}
+                  </div>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-md">
+                  <div className="text-sm text-gray-600 mb-1">予約件数</div>
+                  <div className="text-2xl font-bold text-gray-700">
+                    {selectedYearSummary.reservationCount}件
                   </div>
                 </div>
               </div>
