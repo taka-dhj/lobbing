@@ -4,6 +4,7 @@ import { loadReservations, saveReservations, updateReservation, deleteReservatio
 import { groupReservationsByMonth, getMonthsForYear, getMonthSales, getMonthName } from './utils/calculations';
 import { MonthlyView } from './components/MonthlyView';
 import { ReservationForm } from './components/ReservationForm';
+import { RoomOccupancyView } from './components/RoomOccupancyView';
 import { dummyReservations } from './data/dummyData';
 import { realReservations } from './data/realData';
 
@@ -11,7 +12,8 @@ function App() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [editingReservation, setEditingReservation] = useState<Reservation | undefined>();
   const [showForm, setShowForm] = useState(false);
-  const [selectedYear, setSelectedYear] = useState<number>(2024);
+  const [selectedYear, setSelectedYear] = useState<number>(2025);
+  const [showRoomOccupancy, setShowRoomOccupancy] = useState(false);
 
   useEffect(() => {
     try {
@@ -94,6 +96,16 @@ function App() {
             <h1 className="text-3xl font-bold text-gray-900">予約管理システム</h1>
             <div className="flex gap-3">
               <button
+                onClick={() => setShowRoomOccupancy(!showRoomOccupancy)}
+                className={`px-4 py-2 rounded-md font-medium shadow-sm text-sm ${
+                  showRoomOccupancy 
+                    ? 'bg-green-600 text-white hover:bg-green-700' 
+                    : 'bg-gray-600 text-white hover:bg-gray-700'
+                }`}
+              >
+                {showRoomOccupancy ? '売上表示に戻る' : '部屋稼働率'}
+              </button>
+              <button
                 onClick={handleLoadDummyData}
                 className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 font-medium shadow-sm text-sm"
               >
@@ -121,17 +133,25 @@ function App() {
           </div>
         )}
 
-        {monthlySummaries.length === 0 && !showForm ? (
-          <div className="bg-white rounded-lg shadow-lg p-12 text-center">
-            <p className="text-gray-500 text-lg mb-4">予約がまだ登録されていません</p>
-            <button
-              onClick={handleNewReservation}
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
-            >
-              最初の予約を追加
-            </button>
-          </div>
+        {showRoomOccupancy ? (
+          <RoomOccupancyView
+            year={selectedYear}
+            month={12}
+            reservations={reservations}
+          />
         ) : (
+          <>
+            {monthlySummaries.length === 0 && !showForm ? (
+              <div className="bg-white rounded-lg shadow-lg p-12 text-center">
+                <p className="text-gray-500 text-lg mb-4">予約がまだ登録されていません</p>
+                <button
+                  onClick={handleNewReservation}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium"
+                >
+                  最初の予約を追加
+                </button>
+              </div>
+            ) : (
           <>
             {/* 全体サマリーを上部に表示 */}
             <div className="mb-8 bg-white rounded-lg shadow-lg p-6">
@@ -215,6 +235,8 @@ function App() {
                   />
                 ))}
             </div>
+          </>
+            )}
           </>
         )}
       </main>

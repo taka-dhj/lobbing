@@ -7367,7 +7367,13 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 11000,
     "banquetHall": 0,
     "other": 0,
-    "totalAmount": 77000
+    "totalAmount": 77000,
+    "rooms": [
+      {
+        "roomType": "本館2",
+        "guestCount": 6
+      }
+    ]
   },
   {
     "id": "615",
@@ -7379,7 +7385,13 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 0,
     "banquetHall": 0,
     "other": 0,
-    "totalAmount": 30800
+    "totalAmount": 30800,
+    "rooms": [
+      {
+        "roomType": "本館5",
+        "guestCount": 4
+      }
+    ]
   },
   {
     "id": "616",
@@ -7391,7 +7403,13 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 60500,
     "banquetHall": 7700,
     "other": 0,
-    "totalAmount": 152900
+    "totalAmount": 152900,
+    "rooms": [
+      {
+        "roomType": "本館7",
+        "guestCount": 7
+      }
+    ]
   },
   {
     "id": "617",
@@ -7403,7 +7421,17 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 16500,
     "banquetHall": 0,
     "other": 0,
-    "totalAmount": 115500
+    "totalAmount": 115500,
+    "rooms": [
+      {
+        "roomType": "本館1",
+        "guestCount": 8
+      },
+      {
+        "roomType": "本館7",
+        "guestCount": 1
+      }
+    ]
   },
   {
     "id": "618",
@@ -7415,7 +7443,13 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 44000,
     "banquetHall": 9900,
     "other": 0,
-    "totalAmount": 152900
+    "totalAmount": 152900,
+    "rooms": [
+      {
+        "roomType": "コテージ2",
+        "guestCount": 9
+      }
+    ]
   },
   {
     "id": "619",
@@ -7427,7 +7461,13 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 11000,
     "banquetHall": 0,
     "other": 0,
-    "totalAmount": 66000
+    "totalAmount": 66000,
+    "rooms": [
+      {
+        "roomType": "本館1",
+        "guestCount": 5
+      }
+    ]
   },
   {
     "id": "620",
@@ -7439,7 +7479,13 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 55000,
     "banquetHall": 7700,
     "other": 0,
-    "totalAmount": 147400
+    "totalAmount": 147400,
+    "rooms": [
+      {
+        "roomType": "本館2",
+        "guestCount": 7
+      }
+    ]
   },
   {
     "id": "621",
@@ -7451,7 +7497,17 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 108900,
     "banquetHall": 15400,
     "other": 0,
-    "totalAmount": 293700
+    "totalAmount": 293700,
+    "rooms": [
+      {
+        "roomType": "本館2",
+        "guestCount": 4
+      },
+      {
+        "roomType": "本館5",
+        "guestCount": 10
+      }
+    ]
   },
   {
     "id": "622",
@@ -7463,7 +7519,13 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 0,
     "banquetHall": 0,
     "other": 0,
-    "totalAmount": 69300
+    "totalAmount": 69300,
+    "rooms": [
+      {
+        "roomType": "コテージ1",
+        "guestCount": 9
+      }
+    ]
   },
   {
     "id": "623",
@@ -7475,7 +7537,13 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 0,
     "banquetHall": 0,
     "other": 0,
-    "totalAmount": 84700
+    "totalAmount": 84700,
+    "rooms": [
+      {
+        "roomType": "コテージ3",
+        "guestCount": 11
+      }
+    ]
   },
   {
     "id": "624",
@@ -7487,7 +7555,17 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 22000,
     "banquetHall": 0,
     "other": 0,
-    "totalAmount": 123200
+    "totalAmount": 123200,
+    "rooms": [
+      {
+        "roomType": "本館3",
+        "guestCount": 7
+      },
+      {
+        "roomType": "本館5",
+        "guestCount": 3
+      }
+    ]
   },
   {
     "id": "625",
@@ -7499,7 +7577,17 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 0,
     "banquetHall": 0,
     "other": 0,
-    "totalAmount": 283900
+    "totalAmount": 283900,
+    "rooms": [
+      {
+        "roomType": "別館",
+        "guestCount": 20
+      },
+      {
+        "roomType": "コテージ3",
+        "guestCount": 14
+      }
+    ]
   },
   {
     "id": "626",
@@ -7511,7 +7599,17 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 0,
     "banquetHall": 0,
     "other": 0,
-    "totalAmount": 317300
+    "totalAmount": 317300,
+    "rooms": [
+      {
+        "roomType": "別館",
+        "guestCount": 23
+      },
+      {
+        "roomType": "コテージ1",
+        "guestCount": 15
+      }
+    ]
   },
   {
     "id": "627",
@@ -7523,7 +7621,17 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 0,
     "banquetHall": 0,
     "other": 0,
-    "totalAmount": 325650
+    "totalAmount": 325650,
+    "rooms": [
+      {
+        "roomType": "別館",
+        "guestCount": 24
+      },
+      {
+        "roomType": "コテージ3",
+        "guestCount": 15
+      }
+    ]
   },
   {
     "id": "628",
@@ -7535,7 +7643,13 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 13200,
     "banquetHall": 0,
     "other": 0,
-    "totalAmount": 49500
+    "totalAmount": 49500,
+    "rooms": [
+      {
+        "roomType": "本館7",
+        "guestCount": 3
+      }
+    ]
   },
   {
     "id": "629",
@@ -7547,7 +7661,13 @@ export const realReservations: Reservation[] = [
     "tennisCourt": 13200,
     "banquetHall": 0,
     "other": 0,
-    "totalAmount": 85800
+    "totalAmount": 85800,
+    "rooms": [
+      {
+        "roomType": "本館6",
+        "guestCount": 6
+      }
+    ]
   },
   {
     "id": "630",
