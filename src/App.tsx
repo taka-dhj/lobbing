@@ -204,14 +204,16 @@ function App() {
 
             {/* 月次詳細ビュー */}
             <div>
-              {monthlySummaries.map((summary) => (
-                <MonthlyView
-                  key={summary.month}
-                  summary={summary}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                />
-              ))}
+              {monthlySummaries
+                .filter(summary => summary.month.startsWith(`${selectedYear}-`))
+                .map((summary) => (
+                  <MonthlyView
+                    key={summary.month}
+                    summary={summary}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                  />
+                ))}
             </div>
           </>
         )}
