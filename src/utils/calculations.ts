@@ -65,6 +65,17 @@ export const getNextSixMonths = (): string[] => {
   return months;
 };
 
+// 指定された年の12ヶ月のリストを生成
+export const getMonthsForYear = (year: number): string[] => {
+  const months: string[] = [];
+  
+  for (let month = 1; month <= 12; month++) {
+    months.push(`${year}-${String(month).padStart(2, '0')}`);
+  }
+  
+  return months;
+};
+
 // 特定の月の売上を計算
 export const getMonthSales = (
   month: string,
