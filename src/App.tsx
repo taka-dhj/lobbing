@@ -15,19 +15,12 @@ function App() {
 
   useEffect(() => {
     try {
-      const loaded = loadReservations();
-      // データが空の場合、実データを読み込む
-      if (loaded.length === 0) {
-        console.log('ローカルストレージが空のため、実データを読み込みます');
-        saveReservations(realReservations);
-        setReservations(realReservations);
-      } else {
-        console.log(`ローカルストレージから ${loaded.length} 件の予約を読み込みました`);
-        setReservations(loaded);
-      }
+      // 実データを強制的に読み込む
+      console.log(`実データを読み込みます: ${realReservations.length}件`);
+      saveReservations(realReservations);
+      setReservations(realReservations);
     } catch (error) {
-      console.error('データの読み込みに失敗しました。実データを使用します:', error);
-      // エラーが発生した場合でも実データを表示
+      console.error('データの読み込みに失敗しました:', error);
       setReservations(realReservations);
     }
   }, []);
