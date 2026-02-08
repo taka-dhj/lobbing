@@ -82,13 +82,6 @@ function App() {
     setShowForm(true);
   };
 
-  const handleLoadDummyData = () => {
-    if (confirm('実データを読み込みますか？既存のデータは上書きされます。')) {
-      saveReservations(realReservations);
-      setReservations(realReservations);
-    }
-  };
-
   const handleExportCSV = () => {
     exportYearlyReservations(selectedYear, reservations);
   };
@@ -115,12 +108,6 @@ function App() {
                 className="bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium shadow-sm text-sm"
               >
                 CSV出力
-              </button>
-              <button
-                onClick={handleLoadDummyData}
-                className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 font-medium shadow-sm text-sm"
-              >
-                実データ読み込み
               </button>
               <button
                 onClick={handleNewReservation}

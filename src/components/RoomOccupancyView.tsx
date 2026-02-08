@@ -1,10 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Reservation, RoomType } from '../types';
 
 interface RoomOccupancyViewProps {
   year: number;
   month: number;
   reservations: Reservation[];
+  onYearMonthChange?: (year: number, month: number) => void;
 }
 
 const ROOM_TYPES: RoomType[] = [
@@ -13,14 +14,31 @@ const ROOM_TYPES: RoomType[] = [
   'コテージ1', 'コテージ2', 'コテージ3'
 ];
 
-export const RoomOccupancyView = ({ year, month, reservations }: RoomOccupancyViewProps) => {
+export const RoomOccupancyView = ({ year, month, reservations, onYearMonthChange }: RoomOccupancyViewProps) => {
+  const [selectedYear, setSelectedYear] = useState(year);
+  const [selectedMonth, setSelectedMonth] = useState(month);
+
+  const handleYearChange = (newYear: number) => {
+    setSelectedYear(newYear);
+    if (onYearMonthChange) {
+      onYearMonthChange(newYear, selectedMonth);
+    }
+  };
+
+  const handleMonthChange = (newMonth: number) => {
+    setSelectedMonth(newMonth);
+    if (onYearMonthChange) {
+      onYearMonthChange(selectedYear, newMonth);
+    }
+  };
+
   const occupancyData = useMemo(() => {
     // 指定された年月のデータのみフィルタ
-    const monthStr = `${year}-${String(month).padStart(2, '0')}`;
+    const monthStr = `${selectedYear}-${String(selectedMonth).padStart(2, '0')}`;
     const monthReservations = reservations.filter(r => r.date.startsWith(monthStr));
     
     // その月の日数を取得
-    const daysInMonth = new Date(year, month, 0).getDate();
+    const daysInMonth = new Date(selectedYear, selectedMonth, 0).getDate();
     
     // 日付ごと・部屋ごとのデータを作成
     const dailyOccupancy: Record<number, Record<RoomType, number>> = {};
@@ -56,13 +74,44 @@ export const RoomOccupancyView = ({ year, month, reservations }: RoomOccupancyVi
     });
     
     return { dailyOccupancy, roomOccupancyRate, daysInMonth };
-  }, [year, month, reservations]);
+  }, [selectedYear, selectedMonth, reservations]);
 
   const { dailyOccupancy, roomOccupancyRate, daysInMonth } = occupancyData;
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-2xl font-bold mb-6">{year}年{month}月 部屋稼働状況</h2>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold mb-4">部屋稼働状況</h2>
+        
+        {/* 年月選択UI */}
+        <div className="flex gap-4 items-center mb-4">
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-700">年:</label>
+            <select
+              value={selectedYear}
+              onChange={(e) => handleYearChange(Number(e.target.value))}
+              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {[2024, 2025, 2026, 2027].map(y => (
+                <option key={y} value={y}>{y}年</option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <label className="text-sm font-medium text-gray-700">月:</label>
+            <select
+              value={selectedMonth}
+              onChange={(e) => handleMonthChange(Number(e.target.value))}
+              className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
+                <option key={m} value={m}>{m}月</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
       
       <div className="overflow-x-auto">
         <table className="min-w-full border-collapse">
@@ -80,7 +129,7 @@ export const RoomOccupancyView = ({ year, month, reservations }: RoomOccupancyVi
             {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => (
               <tr key={day} className="hover:bg-gray-50">
                 <td className="border border-gray-300 px-3 py-2 text-center font-medium sticky left-0 bg-white z-10">
-                  {month}/{day}
+                  {selectedMonth}/{day}
                 </td>
                 {ROOM_TYPES.map(room => {
                   const guestCount = dailyOccupancy[day][room];
