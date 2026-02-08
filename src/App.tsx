@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Reservation } from './types';
 import { loadReservations, saveReservations, updateReservation, deleteReservation } from './utils/storage';
 import { groupReservationsByMonth, getMonthsForYear, getMonthSales, getMonthName } from './utils/calculations';
+import { exportYearlyReservations } from './utils/csvExport';
 import { MonthlyView } from './components/MonthlyView';
 import { ReservationForm } from './components/ReservationForm';
 import { RoomOccupancyView } from './components/RoomOccupancyView';
@@ -88,6 +89,10 @@ function App() {
     }
   };
 
+  const handleExportCSV = () => {
+    exportYearlyReservations(selectedYear, reservations);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow-md">
@@ -104,6 +109,12 @@ function App() {
                 }`}
               >
                 {showRoomOccupancy ? '売上表示に戻る' : '部屋稼働率'}
+              </button>
+              <button
+                onClick={handleExportCSV}
+                className="bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-medium shadow-sm text-sm"
+              >
+                CSV出力
               </button>
               <button
                 onClick={handleLoadDummyData}

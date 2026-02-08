@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Reservation, MonthlySummary } from '../types';
 import { formatDate } from '../utils/dateUtils';
 import { getMonthName } from '../utils/calculations';
+import { convertToCSV, downloadCSV } from '../utils/csvExport';
 
 interface MonthlyViewProps {
   summary: MonthlySummary;
@@ -11,6 +12,13 @@ interface MonthlyViewProps {
 
 export const MonthlyView = ({ summary, onEdit, onDelete }: MonthlyViewProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+
+  const handleExportMonth = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const csvContent = convertToCSV(summary.reservations);
+    const filename = `予約データ_${getMonthName(summary.month)}.csv`;
+    downloadCSV(csvContent, filename);
+  };
 
   return (
     <div className="mb-4">
@@ -26,9 +34,17 @@ export const MonthlyView = ({ summary, onEdit, onDelete }: MonthlyViewProps) => 
             <h2 className="text-xl font-bold">{getMonthName(summary.month)}</h2>
             <span className="text-sm opacity-90">({summary.reservations.length}件)</span>
           </div>
-          <div className="text-right">
-            <div className="text-sm opacity-90">合計売上</div>
-            <div className="text-2xl font-bold">¥{summary.totalAmount.toLocaleString()}</div>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleExportMonth}
+              className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded text-sm font-medium transition-colors"
+            >
+              CSV出力
+            </button>
+            <div className="text-right">
+              <div className="text-sm opacity-90">合計売上</div>
+              <div className="text-2xl font-bold">¥{summary.totalAmount.toLocaleString()}</div>
+            </div>
           </div>
         </div>
         <div className="flex gap-6 mt-2 text-sm">
