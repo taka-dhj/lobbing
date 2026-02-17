@@ -19,6 +19,9 @@ export const formatDateForInput = (dateString: string): string => {
   return dateString; // YYYY-MM-DD形式をそのまま返す
 };
 
+/**
+ * UUID v4を生成
+ */
 export const generateId = (): string => {
-  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  return crypto.randomUUID();
 };
