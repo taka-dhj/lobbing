@@ -1,31 +1,65 @@
 import React, { useState, useEffect } from 'react';
+import { Session } from '@supabase/supabase-js';
+import { supabase } from './lib/supabase';
 import { Reservation } from './types';
-import { loadReservations, saveReservations, updateReservation, deleteReservation } from './utils/storage';
+import { loadReservations, saveReservations, updateReservation, deleteReservation, addReservation } from './utils/storage';
 import { groupReservationsByMonth, getMonthsForYear, getMonthSales, getMonthName } from './utils/calculations';
 import { exportYearlyReservations } from './utils/csvExport';
+import { Auth } from './components/Auth';
 import { MonthlyView } from './components/MonthlyView';
 import { ReservationForm } from './components/ReservationForm';
 import { RoomOccupancyView } from './components/RoomOccupancyView';
 import { realReservations } from './data/realData';
 
 function App() {
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [editingReservation, setEditingReservation] = useState<Reservation | undefined>();
   const [showForm, setShowForm] = useState(false);
   const [selectedYear, setSelectedYear] = useState<number>(2025);
   const [showRoomOccupancy, setShowRoomOccupancy] = useState(false);
 
+  // 認証状態の監視
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // データ読み込み
+  useEffect(() => {
+    if (session) {
+      loadData();
+    }
+  }, [session]);
+
+  const loadData = async () => {
     try {
-      // 実データを強制的に読み込む
-      console.log(`実データを読み込みます: ${realReservations.length}件`);
-      saveReservations(realReservations);
-      setReservations(realReservations);
+      const data = await loadReservations();
+      
+      // データが空の場合は実データをインポート
+      if (data.length === 0) {
+        console.log('初回データをインポートします...');
+        await saveReservations(realReservations);
+        setReservations(realReservations);
+      } else {
+        setReservations(data);
+      }
     } catch (error) {
       console.error('データの読み込みに失敗しました:', error);
-      setReservations(realReservations);
+      setReservations([]);
     }
-  }, []);
+  };
 
   const monthlySummaries = groupReservationsByMonth(reservations);
 
@@ -33,7 +67,7 @@ function App() {
   const selectedYearSummary = React.useMemo(() => {
     const yearMonths = getMonthsForYear(selectedYear);
     const yearReservations = reservations.filter(r => {
-      const reservationMonth = r.date.substring(0, 7); // yyyy-MM形式
+      const reservationMonth = r.date.substring(0, 7);
       return yearMonths.includes(reservationMonth);
     });
 
@@ -49,16 +83,20 @@ function App() {
     return { totalAmount, generalTotal, studentTotal, reservationCount };
   }, [reservations, selectedYear]);
 
-  const handleSave = (reservation: Reservation) => {
-    if (editingReservation) {
-      updateReservation(reservation.id, reservation);
-    } else {
-      const updated = [...reservations, reservation];
-      saveReservations(updated);
+  const handleSave = async (reservation: Reservation) => {
+    try {
+      if (editingReservation) {
+        await updateReservation(reservation.id, reservation);
+      } else {
+        await addReservation(reservation);
+      }
+      await loadData();
+      setShowForm(false);
+      setEditingReservation(undefined);
+    } catch (error) {
+      console.error('保存に失敗しました:', error);
+      alert('保存に失敗しました');
     }
-    setReservations(loadReservations());
-    setShowForm(false);
-    setEditingReservation(undefined);
   };
 
   const handleEdit = (reservation: Reservation) => {
@@ -66,9 +104,14 @@ function App() {
     setShowForm(true);
   };
 
-  const handleDelete = (id: string) => {
-    deleteReservation(id);
-    setReservations(loadReservations());
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteReservation(id);
+      await loadData();
+    } catch (error) {
+      console.error('削除に失敗しました:', error);
+      alert('削除に失敗しました');
+    }
   };
 
   const handleCancel = () => {
@@ -85,13 +128,33 @@ function App() {
     exportYearlyReservations(selectedYear, reservations);
   };
 
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
+
+  // ローディング中
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-xl text-gray-600">読み込み中...</div>
+      </div>
+    );
+  }
+
+  // 未認証の場合はログイン画面を表示
+  if (!session) {
+    return <Auth onAuthSuccess={() => {}} />;
+  }
+
+  // 認証済みの場合はメインアプリを表示
   return (
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold text-gray-900">予約管理システム</h1>
-            <div className="flex gap-3">
+            <div className="flex gap-3 items-center">
+              <span className="text-sm text-gray-600">{session.user.email}</span>
               <button
                 onClick={() => setShowRoomOccupancy(!showRoomOccupancy)}
                 className={`px-4 py-2 rounded-md font-medium shadow-sm text-sm ${
@@ -113,6 +176,12 @@ function App() {
                 className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium shadow-sm"
               >
                 + 新しい予約を追加
+              </button>
+              <button
+                onClick={handleSignOut}
+                className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 font-medium shadow-sm text-sm"
+              >
+                ログアウト
               </button>
             </div>
           </div>
