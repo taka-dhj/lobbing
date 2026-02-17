@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Reservation, CustomerType, RoomAllocation, RoomType } from '../types';
 import { calculateTotalAmount } from '../utils/calculations';
 import { generateId } from '../utils/dateUtils';

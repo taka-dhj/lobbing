@@ -6,7 +6,6 @@ import { exportYearlyReservations } from './utils/csvExport';
 import { MonthlyView } from './components/MonthlyView';
 import { ReservationForm } from './components/ReservationForm';
 import { RoomOccupancyView } from './components/RoomOccupancyView';
-import { dummyReservations } from './data/dummyData';
 import { realReservations } from './data/realData';
 
 function App() {
