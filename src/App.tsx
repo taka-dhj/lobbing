@@ -104,6 +104,11 @@ function App() {
     setEditingReservation(reservation);
     setShowForm(true);
     console.log('✅ フォーム表示フラグをtrueに設定しました');
+    
+    // ページトップにスクロール
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   };
 
   const handleDelete = async (id: string) => {
