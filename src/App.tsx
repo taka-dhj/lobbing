@@ -17,7 +17,7 @@ function App() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [editingReservation, setEditingReservation] = useState<Reservation | undefined>();
   const [showForm, setShowForm] = useState(false);
-  const [selectedYear, setSelectedYear] = useState<number>(2025);
+  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
   const [showRoomOccupancy, setShowRoomOccupancy] = useState(false);
 
   // 認証状態の監視
