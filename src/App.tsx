@@ -100,8 +100,10 @@ function App() {
   };
 
   const handleEdit = (reservation: Reservation) => {
+    console.log('📝 編集ボタンがクリックされました:', reservation);
     setEditingReservation(reservation);
     setShowForm(true);
+    console.log('✅ フォーム表示フラグをtrueに設定しました');
   };
 
   const handleDelete = async (id: string) => {
