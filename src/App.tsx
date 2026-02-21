@@ -260,7 +260,7 @@ function App() {
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-semibold">各月売り上げ予定</h3>
                   <div className="flex gap-2">
-                    {[2024, 2025, 2026, 2027].map((year) => (
+                    {[2023, 2024, 2025, 2026, 2027].map((year) => (
                       <button
                         key={year}
                         onClick={() => setSelectedYear(year)}
