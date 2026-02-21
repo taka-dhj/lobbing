@@ -21,7 +21,7 @@ export const loadReservations = async (): Promise<Reservation[]> => {
       id: record.id,
       date: record.date,
       customerName: record.customer_name,
-      type: record.type as '一般' | '学生',
+      type: record.type as '一般' | '学生' | '修学' | '子供',
       unitPrice: record.unit_price,
       numberOfPeople: record.number_of_people,
       tennisCourt: record.tennis_court,

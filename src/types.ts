@@ -1,4 +1,4 @@
-export type CustomerType = '一般' | '学生';
+export type CustomerType = '一般' | '学生' | '修学' | '子供';
 
 export type RoomType = 
   | '本館1' 

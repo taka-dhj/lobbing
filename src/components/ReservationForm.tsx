@@ -125,6 +125,8 @@ export const ReservationForm = ({ reservation, onSave, onCancel }: ReservationFo
           >
             <option value="一般">一般</option>
             <option value="学生">学生</option>
+            <option value="修学">修学</option>
+            <option value="子供">子供</option>
           </select>
         </div>
 
