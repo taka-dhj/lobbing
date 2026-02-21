@@ -9,17 +9,39 @@ const STORAGE_KEY = 'lobbing-reservations';
  */
 export const loadReservations = async (): Promise<Reservation[]> => {
   try {
-    // Supabase のデフォルト上限は1000件なので、Range ヘッダーで拡張
-    const { data, error } = await supabase
-      .from('reservations')
-      .select('*')
-      .range(0, 9999)  // 最大10000件まで取得
-      .order('date', { ascending: true });
+    // Supabase の max-rows 上限（通常1000件）を回避するため、
+    // 複数回に分けて全データを取得
+    let allData: any[] = [];
+    let offset = 0;
+    const limit = 1000;
+    let hasMore = true;
 
-    if (error) throw error;
+    while (hasMore) {
+      const { data, error } = await supabase
+        .from('reservations')
+        .select('*')
+        .range(offset, offset + limit - 1)
+        .order('date', { ascending: true });
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        allData = allData.concat(data);
+        offset += limit;
+        
+        // データが limit 未満なら最後のページ
+        if (data.length < limit) {
+          hasMore = false;
+        }
+      } else {
+        hasMore = false;
+      }
+    }
+
+    console.log(`✅ Supabaseから ${allData.length} 件のデータを取得しました`);
 
     // データベースの形式をアプリの形式に変換
-    return (data || []).map(record => ({
+    return allData.map(record => ({
       id: record.id,
       date: record.date,
       customerName: record.customer_name,
