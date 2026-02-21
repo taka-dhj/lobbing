@@ -9,12 +9,20 @@ const STORAGE_KEY = 'lobbing-reservations';
  */
 export const loadReservations = async (): Promise<Reservation[]> => {
   try {
+    console.log('🔍 Supabaseから全データを取得中...');
     const { data, error } = await supabase
       .from('reservations')
       .select('*')
       .order('date', { ascending: true });
 
     if (error) throw error;
+
+    console.log(`✅ Supabaseから ${data?.length || 0} 件のデータを取得しました`);
+    
+    // 2023年のデータ件数を確認
+    const data2023 = (data || []).filter(r => r.date.startsWith('2023'));
+    console.log(`📊 2023年のデータ: ${data2023.length} 件`);
+    console.log('📝 2023年のサンプル（最初の3件）:', data2023.slice(0, 3));
 
     // データベースの形式をアプリの形式に変換
     return (data || []).map(record => ({
