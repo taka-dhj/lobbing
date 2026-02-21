@@ -9,9 +9,11 @@ const STORAGE_KEY = 'lobbing-reservations';
  */
 export const loadReservations = async (): Promise<Reservation[]> => {
   try {
+    // Supabase のデフォルト上限は1000件なので、Range ヘッダーで拡張
     const { data, error } = await supabase
       .from('reservations')
       .select('*')
+      .range(0, 9999)  // 最大10000件まで取得
       .order('date', { ascending: true });
 
     if (error) throw error;
