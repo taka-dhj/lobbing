@@ -45,20 +45,7 @@ function App() {
 
   const loadData = async () => {
     try {
-      console.log('📥 データ読み込み開始...');
       const data = await loadReservations();
-      console.log(`📦 loadReservations から受け取ったデータ: ${data.length} 件`);
-      
-      // 2023年のデータ件数を確認
-      const data2023 = data.filter(r => r.date.startsWith('2023'));
-      console.log(`🗓️ 2023年のデータ: ${data2023.length} 件`);
-      console.log('📋 2023年の月別件数:', 
-        Array.from({ length: 12 }, (_, i) => {
-          const month = String(i + 1).padStart(2, '0');
-          const count = data2023.filter(r => r.date.startsWith(`2023-${month}`)).length;
-          return count > 0 ? `${month}月: ${count}件` : null;
-        }).filter(Boolean).join(', ')
-      );
       
       // データが空の場合は実データをインポート
       if (data.length === 0) {
@@ -66,7 +53,6 @@ function App() {
         await saveReservations(realReservations);
         setReservations(realReservations);
       } else {
-        console.log(`✅ State に ${data.length} 件のデータをセットします`);
         setReservations(data);
       }
     } catch (error) {
@@ -76,17 +62,6 @@ function App() {
   };
 
   const monthlySummaries = groupReservationsByMonth(reservations);
-  
-  // デバッグ: 月別サマリーの件数を確認
-  console.log('📊 月別サマリー作成完了:');
-  console.log(`  - 総データ件数: ${reservations.length} 件`);
-  console.log(`  - 月別サマリー数: ${monthlySummaries.length} ヶ月`);
-  console.log(`  - 2023年の月別サマリー:`, 
-    monthlySummaries
-      .filter(s => s.month.startsWith('2023'))
-      .map(s => `${s.month}: ${s.reservations.length}件`)
-      .join(', ')
-  );
 
   // 選択中の年度の売上を計算
   const selectedYearSummary = React.useMemo(() => {
