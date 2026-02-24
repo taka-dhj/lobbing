@@ -47,7 +47,7 @@ export const Auth = ({ onAuthSuccess }: AuthProps) => {
       <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            伊豆ロブィング予約管理
+            伊豆高原ロブィング予約管理
           </h1>
           <p className="text-gray-600">
             {isSignUp ? 'アカウント登録' : 'ログイン'}
