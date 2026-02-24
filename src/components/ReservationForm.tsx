@@ -34,11 +34,11 @@ export const ReservationForm = ({ reservation, onSave, onCancel }: ReservationFo
   const totalPeople = rooms.reduce((sum, room) => sum + room.guestCount, 0);
 
   const totalAmount = calculateTotalAmount(
-    formData.unitPrice,
+    Number(formData.unitPrice) || 0,
     totalPeople,
-    formData.tennisCourt,
-    formData.banquetHall,
-    formData.other
+    Number(formData.tennisCourt) || 0,
+    Number(formData.banquetHall) || 0,
+    Number(formData.other) || 0
   );
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -56,7 +56,9 @@ export const ReservationForm = ({ reservation, onSave, onCancel }: ReservationFo
   const handleChange = (field: string, value: string | number) => {
     setFormData(prev => ({
       ...prev,
-      [field]: typeof value === 'string' ? value : Number(value) || 0,
+      [field]: field === 'customerName' || field === 'date' || field === 'type'
+        ? value
+        : Number(value) || 0,
     }));
   };
 
