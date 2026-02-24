@@ -140,6 +140,7 @@ export const ReservationForm = ({ reservation, onSave, onCancel }: ReservationFo
             type="number"
             value={formData.unitPrice}
             onChange={(e) => handleChange('unitPrice', e.target.value)}
+            onFocus={(e) => e.target.value === '0' && e.target.select()}
             required
             min="0"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -220,6 +221,7 @@ export const ReservationForm = ({ reservation, onSave, onCancel }: ReservationFo
             type="number"
             value={formData.tennisCourt}
             onChange={(e) => handleChange('tennisCourt', e.target.value)}
+            onFocus={(e) => e.target.value === '0' && e.target.select()}
             min="0"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -233,6 +235,7 @@ export const ReservationForm = ({ reservation, onSave, onCancel }: ReservationFo
             type="number"
             value={formData.banquetHall}
             onChange={(e) => handleChange('banquetHall', e.target.value)}
+            onFocus={(e) => e.target.value === '0' && e.target.select()}
             min="0"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -246,6 +249,7 @@ export const ReservationForm = ({ reservation, onSave, onCancel }: ReservationFo
             type="number"
             value={formData.other}
             onChange={(e) => handleChange('other', e.target.value)}
+            onFocus={(e) => e.target.value === '0' && e.target.select()}
             min="0"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
